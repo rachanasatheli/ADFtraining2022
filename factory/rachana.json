@@ -1,0 +1,9 @@
+{
+	"name": "rachana",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "11a83f6b-7e63-4f11-b8b4-e6dde65315e4",
+		"tenantId": "bff05191-71e2-4a14-b76a-b263461bf005"
+	}
+}
