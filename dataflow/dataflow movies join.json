@@ -1,0 +1,88 @@
+{
+	"name": "dataflow movies join",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "movies",
+						"type": "DatasetReference"
+					},
+					"name": "movies"
+				},
+				{
+					"dataset": {
+						"referenceName": "moviesdb",
+						"type": "DatasetReference"
+					},
+					"name": "moviesdb"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "outputmovies",
+						"type": "DatasetReference"
+					},
+					"name": "outputmovies"
+				}
+			],
+			"transformations": [
+				{
+					"name": "moviesclean"
+				},
+				{
+					"name": "joinmovies"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          movieId as string,",
+				"          title as string,",
+				"          genres as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> movies",
+				"source(output(",
+				"          movie as string,",
+				"          title as string,",
+				"          genres as string,",
+				"          year as string,",
+				"          Rating as string,",
+				"          RottenTomato as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> moviesdb",
+				"movies derive(column1 = toString(left(title,length(title)-6))) ~> moviesclean",
+				"moviesclean, moviesdb join(column1 == moviesdb@title,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinmovies",
+				"joinmovies select(mapColumn(",
+				"          movieId,",
+				"          title = movies@title,",
+				"          genres = movies@genres,",
+				"          movie,",
+				"          genres = moviesdb@genres,",
+				"          year,",
+				"          Rating,",
+				"          RottenTomato",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> outputmovies"
+			]
+		}
+	}
+}
