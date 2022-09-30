@@ -40,13 +40,13 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> moviesv1",
-				"moviesv1 derive(year = toInteger(trim(right(title,6),'()')) ,",
-				"          title = toString(left(title,length(title)-6))) ~> extractyeartitle",
+				"moviesv1 derive() ~> extractyeartitle",
 				"extractyeartitle sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['moviesclean.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     outputAssertFailedRows: true,",
 				"     partitionBy('hash', 1)) ~> moviesclean"
 			]
 		}
