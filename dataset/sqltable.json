@@ -1,0 +1,24 @@
+{
+	"name": "sqltable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQL_TRAINING",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table_name": {
+				"type": "string"
+			},
+			"schemaname": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "@dataset().schemaname",
+			"table": "@dataset().tablename_name"
+		}
+	}
+}
